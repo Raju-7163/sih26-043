@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Citizen Dashboard — SolveX</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-role="citizen">
+  <div class="dash-app">
+    <aside class="dash-sidebar">
+      <a href="index.html" class="dash-brand" id="dashBrand">Solve<span>X</span></a>
+      <div class="dash-role-chip" id="dashRoleChip">Citizen</div>
+      <nav class="dash-nav" id="dashNav"></nav>
+      <div class="dash-sidebar-foot">
+        <button class="btn btn-secondary btn-sm" onclick="logout()" style="width:100%;justify-content:center;">Logout</button>
+      </div>
+    </aside>
+    <div class="dash-main">
+      <header class="dash-topbar">
+        <div class="flex items-center gap-3">
+          <button class="dash-mobile-toggle" id="dashMenuBtn" type="button">Menu</button>
+          <h1 id="dashPageTitle">Citizen Workspace</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-semibold" id="dashUserName"></span>
+          <a href="submit.html" class="btn btn-primary btn-sm">Report a Problem</a>
+        </div>
+      </header>
+      <div class="dash-content">
+        <div class="dash-welcome">
+          <h2 id="dashWelcomeTitle">Welcome</h2>
+          <p id="dashWelcomeBody"></p>
+        </div>
+        <div class="dash-stat-grid">
+          <div class="dash-stat"><div class="lbl">My Problems</div><div class="num" id="statOne">—</div></div>
+          <div class="dash-stat"><div class="lbl">Awaiting Review</div><div class="num" id="statTwo">—</div></div>
+          <div class="dash-stat"><div class="lbl">Validated</div><div class="num" id="statThree">—</div></div>
+          <div class="dash-stat"><div class="lbl">Active Projects</div><div class="num" id="statFour">—</div></div>
+        </div>
+        <div id="dashLoading" class="loading-state" style="padding:40px 20px;"><div class="spinner"></div><span>Loading your workspace…</span></div>
+        <div id="dashError" class="error-state" style="display:none;padding:24px;"></div>
+        <div class="dash-card">
+          <div class="dash-card-head"><h2>My Problems</h2></div>
+          <div class="dash-list" id="dashPrimaryList"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-head"><h2>Notifications</h2></div>
+          <div class="dash-list" id="dashNotifications"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

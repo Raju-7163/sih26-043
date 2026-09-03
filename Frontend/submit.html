@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Submit a Problem — SolveX</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">Solve<span>X</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard-citizen.html">My Dashboard</a>
+      <a href="submit.html" class="active">Submit Problem</a>
+    </div>
+    <div class="nav-right" id="navAuthArea"></div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- PAGE -->
+  <div class="submit-wrapper">
+
+    <!-- Header -->
+    <div class="submit-head">
+      <div class="section-eyebrow" style="justify-content:center; margin-bottom:14px;">
+        Citizen Problem Submission
+      </div>
+      <h1>Tell us about the problem.</h1>
+      <p>
+        Describe a real-world societal challenge. Our AI will analyze it,
+        identify the right government department, and match it with
+        universities and industry partners who can solve it.
+      </p>
+    </div>
+
+    <!-- Form card -->
+    <div class="submit-form-card">
+
+      <!-- Step indicator -->
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border-subtle);">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--brand-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;">Describe the Problem</div>
+          <div style="font-size:12px;color:var(--text-muted);">AI will analyze and categorize it automatically</div>
+        </div>
+        <div style="flex:1;height:2px;background:var(--border-default);margin:0 8px;border-radius:2px;"></div>
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--bg-muted);border:2px solid var(--border-default);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:12px;font-weight:700;flex-shrink:0;">2</div>
+        <div style="font-size:13px;color:var(--text-muted);font-weight:600;">AI Analysis</div>
+        <div style="flex:1;height:2px;background:var(--border-default);margin:0 8px;border-radius:2px;"></div>
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--bg-muted);border:2px solid var(--border-default);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:12px;font-weight:700;flex-shrink:0;">3</div>
+        <div style="font-size:13px;color:var(--text-muted);font-weight:600;">Partner Match</div>
+      </div>
+
+      <form id="problemForm">
+
+        <!-- Title -->
+        <div class="form-group" style="margin-bottom:22px;">
+          <label class="form-label" for="title">Problem Title</label>
+          <input
+            class="form-control"
+            type="text"
+            id="title"
+            placeholder="e.g. Water wastage in government schools — Vadodara"
+            required
+          />
+        </div>
+
+        <!-- Submission Language & Voice Input Bar -->
+        <div style="background:var(--bg-subtle);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <label class="form-label" for="language" style="margin:0;white-space:nowrap;font-weight:700;">🌐 Language:</label>
+            <select class="form-control" id="language" style="width:auto;padding:6px 12px;font-size:13px;">
+              <option value="English">English</option>
+              <option value="Hindi">हिंदी (Hindi)</option>
+              <option value="Gujarati">ગુજરાતી (Gujarati)</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button type="button" id="voiceBtn" class="btn btn-secondary btn-sm" style="gap:6px;">
+              <span id="micIcon">🎤</span> <span id="voiceBtnText">Speak Problem (Voice Input)</span>
+            </button>
+            <span id="voiceStatus" style="font-size:12px;font-weight:600;color:var(--text-muted);display:none;"></span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group" style="margin-bottom:22px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <label class="form-label" for="description" style="margin:0;">Describe the Problem</label>
+            <span style="font-size:12px;color:var(--text-muted);">Voice transcript can be reviewed and edited below</span>
+          </div>
+          <textarea
+            class="form-control"
+            id="description"
+            rows="6"
+            placeholder="Explain the problem in detail — what is happening, how long it has been going on, what the visible impact is, and anything else that might be relevant…"
+            required
+          ></textarea>
+        </div>
+
+        <!-- Location + Category -->
+        <div class="form-row" style="margin-bottom:22px;">
+          <div class="form-group">
+            <label class="form-label" for="location">Location</label>
+            <input
+              class="form-control"
+              type="text"
+              id="location"
+              placeholder="e.g. Vadodara, Gujarat"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="category">
+              Category
+              <span class="optional">(optional — AI will detect)</span>
+            </label>
+            <select class="form-control" id="category">
+              <option value="">Let AI determine the category</option>
+              <option value="Water & Disaster Management">Water &amp; Disaster Management</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Education">Education</option>
+              <option value="Environment">Environment</option>
+              <option value="Transportation & Road Safety">Transportation &amp; Road Safety</option>
+              <option value="Waste Management">Waste Management</option>
+              <option value="Energy">Energy</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Affected + Urgency -->
+        <div class="form-row" style="margin-bottom:22px;">
+          <div class="form-group">
+            <label class="form-label" for="affected">Who is affected?</label>
+            <input
+              class="form-control"
+              type="text"
+              id="affected"
+              placeholder="e.g. Students, teachers and school administration"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="urgency">Urgency Level</label>
+            <select class="form-control" id="urgency" required>
+              <option value="">Select urgency</option>
+              <option value="Low">Low — Can wait weeks or months</option>
+              <option value="Medium">Medium — Needs attention soon</option>
+              <option value="High">High — Needs prompt action</option>
+              <option value="Critical">Critical — Immediate action required</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Evidence Attachment (Image/Document) -->
+        <div class="form-group" style="margin-bottom:24px;background:var(--bg-subtle);border:1px dashed var(--border-default);border-radius:var(--radius-md);padding:14px 16px;">
+          <label class="form-label" for="evidenceFile" style="display:flex;align-items:center;gap:8px;">
+            <span>📁 Attach Photo / Evidence Document</span>
+            <span class="optional">(Optional)</span>
+          </label>
+          <input
+            type="file"
+            id="evidenceFile"
+            class="form-control"
+            accept="image/*,.pdf,.doc,.docx,.png,.jpg,.jpeg"
+            style="font-size:13px;padding:8px;"
+          />
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Upload images, site photos, or report documents supporting your report.</div>
+        </div>
+
+        <!-- AI Notice -->
+        <div style="background:var(--brand-light);border:1px solid rgba(91,94,244,0.2);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:24px;display:flex;align-items:flex-start;gap:10px;">
+          <span style="font-size:18px;flex-shrink:0;">🤖</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--brand-primary);margin-bottom:3px;">AI-Powered Analysis</div>
+            <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
+              After submission, Google Gemini will automatically detect the category, government department,
+              priority score, impact score, required expertise and recommended solution areas.
+              You don't need to know which department is responsible.
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          id="submitBtn"
+          class="btn btn-primary btn-full btn-lg"
+        >
+          Analyze Problem with AI →
+        </button>
+
+      </form>
+
+      <div id="submitStatus" class="submit-status"></div>
+
+    </div><!-- /form card -->
+
+  </div><!-- /submit-wrapper -->
+
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/submit.js"></script>
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const nl = document.querySelector('.nav-links');
+      const open = nl.dataset.open === '1';
+      nl.dataset.open = open ? '0' : '1';
+      Object.assign(nl.style, open ? {display:'none'} : {
+        display:'flex', flexDirection:'column', position:'absolute',
+        top:'64px', left:'0', right:'0', background:'var(--bg-surface)',
+        padding:'12px 20px 20px', borderBottom:'1px solid var(--border-subtle)', zIndex:'300'
+      });
+    });
+  </script>
+
+</body>
+</html>

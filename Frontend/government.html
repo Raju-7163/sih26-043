@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Government Dashboard — SolveX</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">Solve<span>X</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard-government.html">Overview</a>
+      <a href="government.html" class="active">Validation Desk</a>
+    </div>
+    <div class="nav-right" id="navAuthArea"></div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div style="background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);padding:28px var(--page-pad);">
+    <div style="max-width:var(--page-max);margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div>
+        <div class="section-eyebrow" style="margin-bottom:10px;">Government Portal</div>
+        <h1 style="font-size:clamp(24px,3.5vw,34px);font-weight:800;letter-spacing:-0.4px;">Problem Validation Dashboard</h1>
+        <p style="color:var(--text-secondary);margin-top:6px;font-size:14px;">
+          Review AI-analyzed societal problems, validate priority submissions, and initiate partner matching.
+        </p>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="location.reload()">↺ Refresh</button>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="gov-layout">
+
+    <!-- MAIN -->
+    <div class="gov-main">
+
+      <!-- Problems section -->
+      <div class="card">
+        <div class="card-header-bar">
+          <h2>Pending Problems</h2>
+          <span id="pendingCountBadge" class="badge badge-amber">Loading…</span>
+        </div>
+
+        <div id="loadingMsg" class="loading-state" style="padding:40px 20px;">
+          <div class="spinner"></div>
+          <span>Loading pending problems…</span>
+        </div>
+
+        <div id="errorMsg" class="error-state" style="display:none; padding:40px 20px;"></div>
+
+        <div id="problemList" class="problem-list" style="padding:16px;"></div>
+
+        <div id="emptyMsg" class="empty-state" style="display:none; padding:50px 20px;">
+          <div class="empty-icon">✅</div>
+          <p style="font-weight:600;margin-bottom:6px;">All caught up!</p>
+          <p style="font-size:13px;">No pending problems at the moment.</p>
+        </div>
+      </div>
+
+    </div><!-- /gov-main -->
+
+    <!-- SIDEBAR -->
+    <div class="gov-aside">
+
+      <!-- Stats column -->
+      <div class="gov-stats-col">
+
+        <div class="gov-stat-card">
+          <div class="stat-label">Pending Review</div>
+          <div class="stat-big" id="statPending" style="color:var(--amber);">—</div>
+          <div class="stat-desc">Problems awaiting validation</div>
+        </div>
+
+        <div class="gov-stat-card">
+          <div class="stat-label">Critical Priority</div>
+          <div class="stat-big" id="statCritical" style="color:var(--red);">—</div>
+          <div class="stat-desc">Require immediate attention</div>
+        </div>
+
+        <div class="gov-stat-card">
+          <div class="stat-label">High Priority</div>
+          <div class="stat-big" id="statHigh" style="color:var(--amber);">—</div>
+          <div class="stat-desc">Priority score ≥ 70</div>
+        </div>
+
+      </div>
+
+      <!-- Info card -->
+      <div style="background:var(--brand-light);border:1px solid rgba(91,94,244,0.2);border-radius:var(--radius-lg);padding:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--brand-primary);margin-bottom:10px;">Validation Guide</div>
+        <ul style="font-size:12px;color:var(--text-secondary);line-height:1.8;padding-left:16px;">
+          <li>Review AI analysis carefully</li>
+          <li>Check urgency and impact scores</li>
+          <li>Validate genuine societal problems</li>
+          <li>Reject spam or duplicate submissions</li>
+          <li>Validated problems proceed to partner matching</li>
+        </ul>
+      </div>
+
+    </div><!-- /gov-aside -->
+
+  </div><!-- /gov-layout -->
+
+
+  <!-- ============================================================
+       REVIEW MODAL
+  ============================================================ -->
+  <div id="reviewModal" style="display:none;" class="modal-overlay">
+    <div class="modal-box">
+
+      <div class="modal-header-bar">
+        <h2>Review Problem</h2>
+        <button id="closeModal" class="modal-close" type="button">×</button>
+      </div>
+
+      <div class="modal-body" id="reviewContent">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="modal-footer">
+        <button id="modalValidateBtn" class="btn btn-success" type="button" style="flex:1;justify-content:center;">
+          ✓ Validate Problem
+        </button>
+        <button id="modalRejectBtn" class="btn btn-danger" type="button" style="flex:1;justify-content:center;">
+          ✕ Reject Problem
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/government.js"></script>
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const nl = document.querySelector('.nav-links');
+      const open = nl.dataset.open === '1';
+      nl.dataset.open = open ? '0' : '1';
+      Object.assign(nl.style, open ? {display:'none'} : {
+        display:'flex', flexDirection:'column', position:'absolute',
+        top:'64px', left:'0', right:'0', background:'var(--bg-surface)',
+        padding:'12px 20px 20px', borderBottom:'1px solid var(--border-subtle)', zIndex:'300'
+      });
+    });
+  </script>
+
+</body>
+</html>

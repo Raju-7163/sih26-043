@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partner Matching — SolveX</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">Solve<span>X</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="government.html">Government</a>
+      <a href="submit.html">Submit Problem</a>
+    </div>
+    <div class="nav-right" id="navAuthArea"></div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- LOADING STATE -->
+  <div id="pageLoading" class="loading-state" style="min-height:70vh;">
+    <div class="spinner"></div>
+    <span>Loading partner matches…</span>
+  </div>
+
+  <!-- MAIN CONTENT (hidden until loaded) -->
+  <div id="pageContent" style="display:none;">
+
+    <div class="matching-wrapper">
+
+      <!-- Header -->
+      <div class="matching-head">
+        <div>
+          <div class="section-eyebrow">Partner Intelligence</div>
+          <h1>Find Solution Partners</h1>
+        </div>
+        <a href="javascript:history.back()" class="btn btn-ghost btn-sm">← Back</a>
+      </div>
+
+      <!-- Problem summary card -->
+      <div class="problem-summary-card">
+        <div class="ps-eyebrow">Selected Problem</div>
+        <h2 id="problemTitle">Loading…</h2>
+        <p id="problemDescription">Loading problem description…</p>
+        <div class="problem-summary-meta">
+          <div class="ps-meta-item">
+            📂 <span id="problemCategory">—</span>
+          </div>
+          <div class="ps-meta-item">
+            📍 <span id="problemLocation">—</span>
+          </div>
+          <div class="ps-meta-item">
+            🏛️ <span id="problemDepartment">—</span>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ====================================================
+           UNIVERSITY MATCHING
+      ==================================================== -->
+      <section style="margin-bottom:50px;">
+
+        <div class="partner-section-head">
+          <div>
+            <div class="section-eyebrow">Higher Education</div>
+            <h2>Recommended Universities</h2>
+            <p>Matched on expertise, facilities, category and location</p>
+          </div>
+          <span class="count-pill" id="universityCount">— matches</span>
+        </div>
+
+        <div id="universityLoading" class="loading-state" style="padding:30px;">
+          <div class="spinner"></div>
+          <span>Finding university matches…</span>
+        </div>
+
+        <div id="universityList" class="partner-grid" style="display:none;"></div>
+
+        <div id="universityEmpty" class="empty-state" style="display:none;">
+          <div class="empty-icon">🎓</div>
+          <p>No university matches found for this problem.</p>
+        </div>
+
+      </section>
+
+
+      <!-- ====================================================
+           INDUSTRY MATCHING
+      ==================================================== -->
+      <section style="margin-bottom:50px;">
+
+        <div class="partner-section-head">
+          <div>
+            <div class="section-eyebrow">Industry &amp; Startup Ecosystem</div>
+            <h2>Recommended Industry Partners</h2>
+            <p>Startups, MSMEs, companies and CSR organizations</p>
+          </div>
+          <span class="count-pill" id="industryCount">— matches</span>
+        </div>
+
+        <div id="industryLoading" class="loading-state" style="padding:30px;">
+          <div class="spinner"></div>
+          <span>Finding industry matches…</span>
+        </div>
+
+        <div id="industryList" class="partner-grid" style="display:none;"></div>
+
+        <div id="industryEmpty" class="empty-state" style="display:none;">
+          <div class="empty-icon">🏭</div>
+          <p>No industry matches found for this problem.</p>
+        </div>
+
+      </section>
+
+
+      <!-- ====================================================
+           CONTINUE TO PROJECT
+      ==================================================== -->
+      <div class="match-next-section">
+        <div style="font-size:32px;margin-bottom:12px;">🚀</div>
+        <h2>Ready to build the solution?</h2>
+        <p>
+          Once a university partner is assigned, you can create a project workspace
+          where researchers, students, mentors and industry experts collaborate through
+          the full innovation lifecycle.
+        </p>
+        <button
+          id="continueProjectBtn"
+          class="btn btn-primary btn-lg"
+          onclick="goToProject()"
+          disabled
+          style="opacity:0.5;cursor:not-allowed;"
+        >
+          Continue to Project Workspace →
+        </button>
+        <p id="continueHint" style="margin-top:12px;font-size:13px;color:var(--text-muted);">
+          Accept a university partner above to enable this button.
+        </p>
+      </div>
+
+      <div id="matchingMessage" style="text-align:center;margin-top:16px;font-size:14px;font-weight:600;min-height:20px;"></div>
+
+    </div><!-- /matching-wrapper -->
+  </div><!-- /#pageContent -->
+
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/matching.js"></script>
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const nl = document.querySelector('.nav-links');
+      const open = nl.dataset.open === '1';
+      nl.dataset.open = open ? '0' : '1';
+      Object.assign(nl.style, open ? {display:'none'} : {
+        display:'flex', flexDirection:'column', position:'absolute',
+        top:'64px', left:'0', right:'0', background:'var(--bg-surface)',
+        padding:'12px 20px 20px', borderBottom:'1px solid var(--border-subtle)', zIndex:'300'
+      });
+    });
+  </script>
+
+</body>
+</html>

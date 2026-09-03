@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — SolveX</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Login-page specific styles ─────────────────────────── */
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-base);
+    }
+
+    .login-shell {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* ── Left panel: branding ──────────────────────────────── */
+    .login-brand {
+      background: var(--brand-gradient);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(40px, 6vw, 80px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-brand::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -80px;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .login-brand::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      left: -60px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .brand-logo {
+      font-size: 30px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin-bottom: 32px;
+    }
+
+    .brand-logo span { opacity: 0.7; }
+
+    .brand-headline {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+
+    .brand-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.7;
+      max-width: 380px;
+      margin-bottom: 40px;
+    }
+
+    .brand-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .brand-step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .brand-step-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── Right panel: form ─────────────────────────────────── */
+    .login-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(32px, 5vw, 60px) clamp(28px, 6vw, 80px);
+      background: var(--bg-surface);
+      overflow-y: auto;
+    }
+
+    .login-panel-inner {
+      max-width: 420px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .panel-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+    }
+
+    .panel-subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Mode tabs (Login / Register) ──────────────────────── */
+    .mode-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--bg-muted);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .mode-tab {
+      flex: 1;
+      padding: 9px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      border-radius: calc(var(--radius-md) - 2px);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      font-family: var(--font);
+    }
+
+    .mode-tab.active {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-xs);
+    }
+
+    /* ── Role picker ────────────────────────────────────────── */
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .role-card {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .role-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .role-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 14px 10px;
+      border: 2px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      background: var(--bg-surface);
+    }
+
+    .role-card input:checked + .role-label {
+      border-color: var(--brand-primary);
+      background: var(--brand-light);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    .role-label:hover {
+      border-color: var(--brand-primary);
+      background: var(--bg-subtle);
+    }
+
+    .role-icon {
+      font-size: 22px;
+    }
+
+    .role-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .role-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ── Form ───────────────────────────────────────────────── */
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-form .form-group {
+      gap: 6px;
+      margin: 0;
+    }
+
+    .auth-form .form-label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .auth-form .form-control {
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap .form-control {
+      padding-right: 44px;
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .org-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 14px 16px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+    }
+
+    .org-fields-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: -4px;
+    }
+
+    /* ── Submit button & status ─────────────────────────────── */
+    .auth-submit {
+      width: 100%;
+      padding: 13px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--radius-md);
+      margin-top: 4px;
+    }
+
+    .auth-status {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 20px;
+      padding: 2px 0;
+    }
+
+    .auth-status.error   { color: var(--red); }
+    .auth-status.success { color: var(--green); }
+
+    /* ── Divider ────────────────────────────────────────────── */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    /* ── Demo accounts hint ─────────────────────────────────── */
+    .demo-hint {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .demo-hint-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .demo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .demo-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .demo-role {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .demo-cred {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .demo-fill {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brand-primary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 2px 6px;
+      font-family: var(--font);
+    }
+
+    .demo-fill:hover { text-decoration: underline; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 820px) {
+      .login-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .login-brand {
+        padding: 32px 24px;
+        min-height: auto;
+      }
+
+      .brand-steps { display: none; }
+
+      .brand-headline { font-size: 24px; }
+
+      .login-panel {
+        padding: 32px 24px 48px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .role-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV (slim) -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">Solve<span>X</span></a>
+    <div id="navAuthArea"></div>
+  </nav>
+
+
+  <!-- MAIN SHELL -->
+  <div class="login-shell">
+
+    <!-- ── LEFT: Branding ──────────────────────────────────── -->
+    <div class="login-brand">
+      <div class="brand-logo">Solve<span>X</span></div>
+
+      <h1 class="brand-headline">
+        Connecting Communities<br/>to Innovation
+      </h1>
+
+      <p class="brand-sub">
+        AI-powered platform that transforms societal problems into
+        real, deployed solutions — through government validation,
+        university research and industry expertise.
+      </p>
+
+      <div class="brand-steps">
+        <div class="brand-step">
+          <div class="brand-step-icon">📝</div>
+          <span>Citizens submit real-world problems</span>
+        </div>
+        <div class="brand-step">
+          <div class="brand-step-icon">🤖</div>
+          <span>AI analyzes, categorizes and prioritizes</span>
+        </div>
+        <div class="brand-step">
+          <div class="brand-step-icon">🏛️</div>
+          <span>Government validates and routes</span>
+        </div>
+        <div class="brand-step">
+          <div class="brand-step-icon">🎓</div>
+          <span>Universities research and prototype</span>
+        </div>
+        <div class="brand-step">
+          <div class="brand-step-icon">🏭</div>
+          <span>Industry deploys for measurable impact</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── RIGHT: Auth form ─────────────────────────────────── -->
+    <div class="login-panel">
+      <div class="login-panel-inner">
+
+        <h2 class="panel-title" id="panelTitle">Welcome back</h2>
+        <p class="panel-subtitle" id="panelSubtitle">Sign in to your SolveX account</p>
+
+        <!-- Mode toggle -->
+        <div class="mode-tabs" role="tablist">
+          <button
+            class="mode-tab active"
+            id="tabLogin"
+            role="tab"
+            aria-selected="true"
+            onclick="switchMode('login')"
+          >Sign In</button>
+          <button
+            class="mode-tab"
+            id="tabRegister"
+            role="tab"
+            aria-selected="false"
+            onclick="switchMode('register')"
+          >Create Account</button>
+        </div>
+
+
+        <!-- ── ROLE PICKER ──────────────────────────────────── -->
+        <div id="rolePicker" style="margin-bottom:24px;">
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:10px;">
+            I am a…
+          </div>
+          <div class="role-grid">
+
+            <label class="role-card">
+              <input type="radio" name="role" value="citizen" checked />
+              <div class="role-label">
+                <div class="role-icon">👤</div>
+                <div class="role-name">Citizen</div>
+                <div class="role-desc">Submit &amp; track problems</div>
+              </div>
+            </label>
+
+            <label class="role-card">
+              <input type="radio" name="role" value="government" />
+              <div class="role-label">
+                <div class="role-icon">🏛️</div>
+                <div class="role-name">Government</div>
+                <div class="role-desc">Validate &amp; route problems</div>
+              </div>
+            </label>
+
+            <label class="role-card">
+              <input type="radio" name="role" value="university" />
+              <div class="role-label">
+                <div class="role-icon">🎓</div>
+                <div class="role-name">University</div>
+                <div class="role-desc">Research &amp; prototype</div>
+              </div>
+            </label>
+
+            <label class="role-card">
+              <input type="radio" name="role" value="industry" />
+              <div class="role-label">
+                <div class="role-icon">🏭</div>
+                <div class="role-name">Industry</div>
+                <div class="role-desc">Partner &amp; deploy</div>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+
+        <!-- ── FORM ─────────────────────────────────────────── -->
+        <form class="auth-form" id="authForm" novalidate>
+
+          <!-- Name (register only) -->
+          <div class="form-group" id="fieldName" style="display:none;">
+            <label class="form-label" for="inputName">Full Name</label>
+            <input
+              class="form-control"
+              type="text"
+              id="inputName"
+              placeholder="Your full name"
+              autocomplete="name"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label" for="inputEmail">Email Address</label>
+            <input
+              class="form-control"
+              type="email"
+              id="inputEmail"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label" for="inputPassword">Password</label>
+            <div class="password-wrap">
+              <input
+                class="form-control"
+                type="password"
+                id="inputPassword"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="toggle-pw"
+                id="togglePw"
+                aria-label="Toggle password visibility"
+              >👁</button>
+            </div>
+          </div>
+
+          <!-- Organisation fields (register, non-citizen roles) -->
+          <div id="orgFields" style="display:none;">
+            <div class="org-fields">
+              <div class="org-fields-label">Organisation</div>
+              <div class="form-group">
+                <label class="form-label" for="inputOrgName">Organisation Name</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="inputOrgName"
+                  placeholder="e.g. IIT Bombay / Tata Consultancy Services"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="inputOrgId">
+                  Database ID
+                  <span class="optional">(optional — for university/industry accounts)</span>
+                </label>
+                <input
+                  class="form-control"
+                  type="number"
+                  id="inputOrgId"
+                  placeholder="1"
+                  min="1"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Status message -->
+          <div class="auth-status" id="authStatus"></div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="btn btn-primary auth-submit"
+            id="authSubmit"
+          >
+            Sign In
+          </button>
+
+        </form>
+
+
+        <!-- Divider + demo accounts (loaded from backend when DEMO_MODE is on) -->
+        <div id="demoSection" style="margin-top:28px; display:none;">
+          <div class="or-divider">Quick Demo Access</div>
+          <div class="demo-hint" style="margin-top:14px;">
+            <div class="demo-hint-title">Try with a demo account</div>
+            <div id="demoAccountList"></div>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.5;">
+              Demo credentials are provided by the server only when development demo mode is enabled.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /login-shell -->
+
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // ── Mode: login | register ────────────────────────────────
+    let currentMode = 'login';
+
+    // Check URL param for initial mode
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'register') {
+      setTimeout(() => switchMode('register'), 0);
+    }
+
+    // If already logged in, redirect immediately
+    window.addEventListener('DOMContentLoaded', () => {
+      if (isLoggedIn()) {
+        const user = getCurrentUser();
+        if (user) redirectToDashboard(user);
+        return;
+      }
+      const presetRole = urlParams.get('role');
+      if (presetRole) {
+        const radio = document.querySelector(`input[name="role"][value="${presetRole}"]`);
+        if (radio) radio.checked = true;
+      }
+      loadDemoAccounts();
+    });
+
+    function switchMode(mode) {
+      currentMode = mode;
+
+      const isReg = (mode === 'register');
+
+      document.getElementById('tabLogin').classList.toggle('active', !isReg);
+      document.getElementById('tabRegister').classList.toggle('active', isReg);
+
+      document.getElementById('panelTitle').textContent    = isReg ? 'Create your account'   : 'Welcome back';
+      document.getElementById('panelSubtitle').textContent = isReg ? 'Join the SolveX platform' : 'Sign in to your SolveX account';
+
+      document.getElementById('fieldName').style.display   = isReg ? 'flex' : 'none';
+      document.getElementById('rolePicker').style.display  = 'block';
+      document.getElementById('authSubmit').textContent    = isReg ? 'Create Account' : 'Sign In';
+
+      document.getElementById('inputPassword').autocomplete = isReg ? 'new-password' : 'current-password';
+
+      updateOrgFields();
+      setStatus('', '');
+    }
+
+
+    // ── Show/hide org fields based on selected role ───────────
+    document.querySelectorAll('input[name="role"]').forEach(radio => {
+      radio.addEventListener('change', updateOrgFields);
+    });
+
+    function getSelectedRole() {
+      const checked = document.querySelector('input[name="role"]:checked');
+      return checked ? checked.value : 'citizen';
+    }
+
+    function updateOrgFields() {
+      if (currentMode !== 'register') {
+        document.getElementById('orgFields').style.display = 'none';
+        return;
+      }
+      const role = getSelectedRole();
+      document.getElementById('orgFields').style.display =
+        (role === 'university' || role === 'industry') ? 'block' : 'none';
+    }
+
+
+    // ── Password toggle ───────────────────────────────────────
+    document.getElementById('togglePw').addEventListener('click', () => {
+      const pw  = document.getElementById('inputPassword');
+      const btn = document.getElementById('togglePw');
+      if (pw.type === 'password') {
+        pw.type      = 'text';
+        btn.textContent = '🙈';
+      } else {
+        pw.type      = 'password';
+        btn.textContent = '👁';
+      }
+    });
+
+
+    // ── Status helper ─────────────────────────────────────────
+    function setStatus(msg, type) {
+      const el = document.getElementById('authStatus');
+      el.textContent = msg;
+      el.className   = 'auth-status' + (type ? ' ' + type : '');
+    }
+
+    function setLoading(loading) {
+      const btn = document.getElementById('authSubmit');
+      btn.disabled    = loading;
+      btn.textContent = loading
+        ? (currentMode === 'register' ? 'Creating account…' : 'Signing in…')
+        : (currentMode === 'register' ? 'Create Account' : 'Sign In');
+    }
+
+
+    // ── Form submit ───────────────────────────────────────────
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email    = document.getElementById('inputEmail').value.trim();
+      const password = document.getElementById('inputPassword').value;
+
+      if (!email || !password) {
+        setStatus('Please enter your email and password.', 'error');
+        return;
+      }
+
+      setStatus('', '');
+      setLoading(true);
+
+      try {
+        let data;
+
+        if (currentMode === 'login') {
+          data = await login(email, password, getSelectedRole());
+        } else {
+          const name    = document.getElementById('inputName').value.trim();
+          const role    = getSelectedRole();
+          const orgName = document.getElementById('inputOrgName').value.trim() || null;
+          const orgId   = parseInt(document.getElementById('inputOrgId').value) || null;
+
+          if (!name) {
+            setStatus('Please enter your full name.', 'error');
+            setLoading(false);
+            return;
+          }
+
+          data = await register(name, email, password, role, orgName, orgId);
+        }
+
+        setStatus('✓ Success! Redirecting…', 'success');
+
+        setTimeout(() => {
+          redirectToDashboard(data.user);
+        }, 600);
+
+      } catch (err) {
+        setStatus(err.message || 'Something went wrong. Please try again.', 'error');
+        setLoading(false);
+      }
+    });
+
+
+    // ── Demo fill ─────────────────────────────────────────────
+    function fillDemo(email, password, role) {
+      document.getElementById('inputEmail').value    = email;
+      document.getElementById('inputPassword').value = password;
+      if (role) {
+        const radio = document.querySelector(`input[name="role"][value="${role}"]`);
+        if (radio) radio.checked = true;
+      }
+      if (currentMode !== 'login') switchMode('login');
+      updateOrgFields();
+      setStatus('Demo credentials filled — click Sign In', '');
+    }
+
+
+    async function loadDemoAccounts() {
+      const section = document.getElementById('demoSection');
+      const list = document.getElementById('demoAccountList');
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/demo`);
+        if (!response.ok) {
+          section.style.display = 'none';
+          return;
+        }
+        const data = await response.json();
+        const accounts = data.accounts || [];
+        if (!accounts.length) {
+          section.style.display = 'none';
+          return;
+        }
+        const roleMeta = {
+          citizen: '👤 Citizen',
+          government: '🏛️ Government',
+          university: '🎓 University',
+          industry: '🏭 Industry',
+        };
+        list.innerHTML = accounts.map((account) => {
+          const email = String(account.email || '').replace(/'/g, "\\'");
+          const password = String(account.password || '').replace(/'/g, "\\'");
+          const role = String(account.role || 'citizen').replace(/'/g, "\\'");
+          return `
+            <div class="demo-row">
+              <span class="demo-role">${roleMeta[account.role] || account.role}</span>
+              <span class="demo-cred">${account.email}</span>
+              <button class="demo-fill" type="button" onclick="fillDemo('${email}','${password}','${role}')">Fill</button>
+            </div>
+          `;
+        }).join('');
+        section.style.display = 'block';
+      } catch {
+        section.style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+</html>

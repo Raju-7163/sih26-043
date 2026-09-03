@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Problem Details — SolveX</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">Solve<span>X</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="government.html">Government</a>
+      <a href="submit.html">Submit Problem</a>
+    </div>
+    <div class="nav-right" id="navAuthArea"></div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- LOADING -->
+  <div id="loadingState" class="loading-state" style="min-height:60vh;">
+    <div class="spinner"></div>
+    <span>Loading problem details…</span>
+  </div>
+
+  <!-- ERROR -->
+  <div id="errorState" class="error-state" style="display:none; min-height:60vh;">
+    <div style="font-size:36px; margin-bottom:14px;">⚠️</div>
+    <p id="errorMsg" style="font-size:15px;"></p>
+    <a href="index.html" class="btn btn-secondary" style="display:inline-flex;margin-top:18px;">← Back to Home</a>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="problemContent" style="display:none;">
+
+    <div class="problem-detail-wrapper">
+
+      <!-- Page header -->
+      <div class="problem-detail-header">
+        <div style="flex:1;">
+          <div class="section-eyebrow" style="margin-bottom:10px;">Societal Problem</div>
+          <h1 id="problemTitle">—</h1>
+          <div class="header-meta">
+            <span id="statusBadge" class="badge badge-neutral">—</span>
+            <span id="validationBadge" class="badge badge-neutral">—</span>
+            <span id="urgencyBadge" class="badge badge-neutral">—</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <a href="javascript:history.back()" class="btn btn-ghost btn-sm">← Back</a>
+        </div>
+      </div>
+
+      <!-- Two-column layout -->
+      <div class="detail-grid">
+
+        <!-- MAIN COLUMN -->
+        <div class="detail-main">
+
+          <!-- Problem description card -->
+          <div class="card">
+            <div class="card-header-bar">
+              <h2>Problem Description</h2>
+            </div>
+            <div class="card-body">
+              <div class="description-block" id="problemDescription">—</div>
+              <div class="info-grid info-grid-2" style="margin-top:18px;">
+                <div class="info-item">
+                  <div class="info-label">Location</div>
+                  <div class="info-value" id="problemLocation">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">People Affected</div>
+                  <div class="info-value" id="problemAffected">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Input Type</div>
+                  <div class="info-value" id="inputType">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Language</div>
+                  <div class="info-value" id="problemLanguage">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Analysis card -->
+          <div class="ai-card">
+            <div class="ai-card-head">
+              <span style="font-size:20px;">🤖</span>
+              <h2>AI Analysis</h2>
+              <span class="badge badge-brand" style="margin-left:auto;">Gemini AI</span>
+            </div>
+            <div class="ai-card-body">
+
+              <!-- Scores row -->
+              <div class="ai-scores">
+                <div class="ai-score-box">
+                  <div class="score-label-text">Priority</div>
+                  <div class="score-big"><span id="priorityScore">—</span><span class="score-unit">/100</span></div>
+                </div>
+                <div class="ai-score-box">
+                  <div class="score-label-text">Impact</div>
+                  <div class="score-big"><span id="impactScore">—</span><span class="score-unit">/10</span></div>
+                </div>
+                <div class="ai-score-box">
+                  <div class="score-label-text">Confidence</div>
+                  <div class="score-big"><span id="departmentConfidence">—</span><span class="score-unit">%</span></div>
+                </div>
+              </div>
+
+              <!-- Department + Category -->
+              <div class="info-grid info-grid-2" style="margin-bottom:18px;">
+                <div class="info-item">
+                  <div class="info-label">Detected Category</div>
+                  <div class="info-value" id="detectedCategory">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Government Department</div>
+                  <div class="info-value" id="detectedDepartment">—</div>
+                </div>
+              </div>
+
+              <!-- Affected population -->
+              <div style="margin-bottom:18px;">
+                <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:8px;">Affected Population</div>
+                <div style="background:var(--bg-subtle);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:14px 16px;font-size:14px;color:var(--text-secondary);" id="affectedPopulation">—</div>
+              </div>
+
+              <!-- Required expertise -->
+              <div style="margin-bottom:18px;">
+                <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:10px;">Required Expertise</div>
+                <div class="tags-row" id="requiredExpertise"></div>
+              </div>
+
+              <!-- Solution areas -->
+              <div>
+                <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:10px;">Suggested Solution Areas</div>
+                <div class="tags-row" id="solutionAreas"></div>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /detail-main -->
+
+
+        <!-- SIDEBAR -->
+        <div class="detail-aside">
+
+          <!-- Status card -->
+          <div class="card">
+            <div class="card-header-bar">
+              <h3 style="font-size:14px;font-weight:700;">Problem Status</h3>
+            </div>
+            <div class="card-body" style="padding:20px;">
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div class="info-item">
+                  <div class="info-label">Validation Status</div>
+                  <div class="info-value" id="sideValidation">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Problem Status</div>
+                  <div class="info-value" id="sideStatus">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Duplicate Of</div>
+                  <div class="info-value" id="sideDuplicate">None</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next step card -->
+          <div style="background:var(--brand-gradient);border-radius:var(--radius-lg);padding:24px;color:#fff;box-shadow:var(--shadow-brand);">
+            <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;opacity:0.7;margin-bottom:10px;">Next Step</div>
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:8px;">Government Validation</h3>
+            <p style="font-size:13px;opacity:0.85;line-height:1.6;margin-bottom:18px;">
+              This problem needs to be reviewed and validated by a government officer before partner matching can begin.
+            </p>
+            <button
+              type="button"
+              class="btn"
+              style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;width:100%;justify-content:center;"
+              onclick="window.location.href='government.html'"
+            >
+              Go to Government Dashboard →
+            </button>
+          </div>
+
+          <!-- University matching button (shown after validation) -->
+          <div id="matchingSection" style="display:none;">
+            <div style="background:var(--green-bg);border:1px solid var(--green);border-radius:var(--radius-lg);padding:20px;">
+              <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">✓ Problem Validated</div>
+              <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6;">
+                This problem is validated. You can now proceed to find university and industry partners.
+              </p>
+              <button
+                type="button"
+                id="matchingButton"
+                class="btn btn-success btn-full"
+              >
+                Find Solution Partners →
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /detail-aside -->
+
+      </div><!-- /detail-grid -->
+
+    </div><!-- /problem-detail-wrapper -->
+
+  </div><!-- /#problemContent -->
+
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/problem.js"></script>
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const nl = document.querySelector('.nav-links');
+      const open = nl.dataset.open === '1';
+      nl.dataset.open = open ? '0' : '1';
+      Object.assign(nl.style, open ? {display:'none'} : {
+        display:'flex', flexDirection:'column', position:'absolute',
+        top:'64px', left:'0', right:'0', background:'var(--bg-surface)',
+        padding:'12px 20px 20px', borderBottom:'1px solid var(--border-subtle)', zIndex:'300'
+      });
+    });
+  </script>
+
+</body>
+</html>

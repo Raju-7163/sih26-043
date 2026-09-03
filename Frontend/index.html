@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SolveX — Societal Innovation Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ======================================================
+       NAVIGATION
+  ====================================================== -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">Solve<span>X</span></a>
+
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="#how-it-works">How it works</a>
+    </div>
+
+    <!-- Auth area — rendered by auth.js based on login state -->
+    <div class="nav-right" id="navAuthArea">
+      <!-- Populated by auth.js renderNavAuth() -->
+      <a href="login.html" class="btn btn-ghost btn-sm">Login</a>
+      <a href="login.html?mode=register" class="btn btn-primary btn-sm">Sign Up</a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+
+  <!-- ======================================================
+       HERO
+  ====================================================== -->
+  <section class="landing-hero">
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">SIH 2026 — Problem Statement 043</div>
+
+      <h1 class="hero-title">
+        Turn societal<br/>
+        <span class="accent">problems</span> into<br/>
+        deployable solutions.
+      </h1>
+
+      <p class="hero-subtitle">
+        SolveX is an AI-powered collaboration portal that connects
+        citizens, government, universities and industry to drive
+        real, measurable social impact.
+      </p>
+
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="handleSubmitClick()">
+          Report a Problem
+        </button>
+        <a class="btn btn-secondary btn-lg" href="login.html">
+          Login
+        </a>
+        <a class="btn btn-ghost btn-lg" href="#how-it-works">
+          How it works
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero visual card -->
+    <div class="hero-visual">
+      <div class="hero-visual-head">
+        <span>AI Problem Analysis</span>
+        <span class="live-dot">LIVE</span>
+      </div>
+      <div class="hero-visual-body">
+        <p class="problem-label">DETECTED PROBLEM</p>
+        <h3>Water wastage in government schools — Vadodara</h3>
+
+        <div class="hero-stat-row">
+          <div class="hero-stat-box">
+            <p class="label">Category</p>
+            <p class="value">Water Management</p>
+          </div>
+          <div class="hero-stat-box">
+            <p class="label">Priority Score</p>
+            <p class="value" style="color:var(--brand-primary)">91 / 100</p>
+          </div>
+        </div>
+
+        <p class="problem-label">REQUIRED EXPERTISE</p>
+        <div class="tags-row" style="margin-top:8px;">
+          <span class="badge badge-brand">IoT Sensors</span>
+          <span class="badge badge-blue">Data Analytics</span>
+          <span class="badge badge-purple">Civil Engineering</span>
+        </div>
+
+        <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--border-subtle);">
+          <p class="problem-label" style="margin-bottom:8px;">MATCHED PARTNERS</p>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; font-size:13px;">
+              <span style="font-weight:600;">IIT Bombay</span>
+              <span class="badge badge-green">94% match</span>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; font-size:13px;">
+              <span style="font-weight:600;">Tata Consultancy Services</span>
+              <span class="badge badge-brand">87% match</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       STATS ROW
+  ====================================================== -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num" id="statProblems">—</div>
+      <div class="stat-lbl">Problems Submitted</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statValidated">—</div>
+      <div class="stat-lbl">Problems Validated</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statUniversities">8+</div>
+      <div class="stat-lbl">Universities Seeded</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statIndustries">10+</div>
+      <div class="stat-lbl">Industry Partners</div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================
+       HOW IT WORKS
+  ====================================================== -->
+  <section class="pipeline-section" id="how-it-works">
+
+    <div class="section-eyebrow">How It Works</div>
+    <h2 style="font-size:clamp(24px,3.5vw,36px); font-weight:800; letter-spacing:-0.4px; margin-bottom:8px;">
+      From submission to social impact
+    </h2>
+    <p style="color:var(--text-secondary); max-width:560px; line-height:1.7; font-size:15px;">
+      Every problem goes through a structured pipeline — AI-analyzed, government-validated,
+      and solved through university–industry collaboration.
+    </p>
+
+    <div class="pipeline-flow">
+      <div class="flow-step">
+        <div class="flow-dot">📝</div>
+        <div class="flow-label">Citizen<br/>Submits</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">🤖</div>
+        <div class="flow-label">AI<br/>Analysis</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">🏛️</div>
+        <div class="flow-label">Govt<br/>Validates</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">🎓</div>
+        <div class="flow-label">University<br/>Assigned</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">🏭</div>
+        <div class="flow-label">Industry<br/>Partners</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">🔬</div>
+        <div class="flow-label">Research &amp;<br/>Prototype</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">🚀</div>
+        <div class="flow-label">Pilot &amp;<br/>Deploy</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">📊</div>
+        <div class="flow-label">Measurable<br/>Impact</div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       BACKEND STATUS (dev helper)
+  ====================================================== -->
+  <div class="connection-widget">
+    <div class="connection-inner" id="backendStatusWrap">
+      <span id="backendDot" style="width:7px;height:7px;border-radius:50%;background:var(--border-default);display:inline-block;flex-shrink:0;"></span>
+      <span id="backendStatus">Checking backend connection…</span>
+    </div>
+  </div>
+
+
+  <!-- ======================================================
+       FOOTER
+  ====================================================== -->
+  <footer style="border-top:1px solid var(--border-subtle); padding:28px var(--page-pad); text-align:center; font-size:13px; color:var(--text-muted);">
+    SolveX &nbsp;·&nbsp; SIH 2026 Problem Statement 043 &nbsp;·&nbsp; Societal Innovation Collaboration Portal
+  </footer>
+
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Smart submit click — if logged in as citizen go to submit,
+    // otherwise go to login page with redirect
+    function handleSubmitClick() {
+      const user = getCurrentUser();
+      if (user && user.role === 'citizen') {
+        window.location.href = 'submit.html';
+      } else if (user) {
+        // Logged in but not citizen — redirect to their dashboard
+        redirectToDashboard(user);
+      } else {
+        window.location.href = 'login.html?next=' + encodeURIComponent('submit.html');
+      }
+    }
+
+    // Live backend status
+    (async () => {
+      const dot    = document.getElementById('backendDot');
+      const status = document.getElementById('backendStatus');
+      try {
+        const r = await fetch('http://127.0.0.1:8000/');
+        const d = await r.json();
+        dot.style.background    = 'var(--green)';
+        status.textContent      = '✓ Backend connected — ' + (d.message || 'Running');
+        status.style.color      = 'var(--green)';
+      } catch {
+        dot.style.background    = 'var(--red)';
+        status.textContent      = '✗ Backend not reachable — start the FastAPI server';
+        status.style.color      = 'var(--red)';
+      }
+    })();
+
+    // Live problem & validated counts
+    (async () => {
+      try {
+        const stats = await getPublicStats();
+        document.getElementById('statProblems').textContent = stats.problems_submitted ?? '—';
+        document.getElementById('statValidated').textContent = stats.problems_validated ?? '—';
+        document.getElementById('statUniversities').textContent = stats.universities ?? '—';
+        document.getElementById('statIndustries').textContent = stats.industries ?? '—';
+      } catch { /* keep placeholders */ }
+    })();
+
+    // Hamburger
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const nl = document.querySelector('.nav-links');
+      nl.style.display = nl.style.display === 'flex' ? 'none' : 'flex';
+      nl.style.flexDirection = 'column';
+      nl.style.position = 'absolute';
+      nl.style.top = '64px';
+      nl.style.left = '0';
+      nl.style.right = '0';
+      nl.style.background = 'var(--bg-surface)';
+      nl.style.padding = '12px 20px 20px';
+      nl.style.borderBottom = '1px solid var(--border-subtle)';
+      nl.style.zIndex = '300';
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SolveX - Problem Analysis</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Solve<span>X</span>
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="submit.html">
+                Submit Problem
+            </a>
+
+            <a href="#">
+                Solutions
+            </a>
+
+            <a href="#">
+                Impact
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="analysis-page">
+
+
+        <!-- HEADER -->
+
+        <div class="analysis-header">
+
+            <p class="tagline">
+                SOLVEX INTELLIGENCE
+            </p>
+
+
+            <h1>
+                Problem Analysis
+            </h1>
+
+
+            <p>
+                We've analyzed the submitted challenge
+                and structured it into actionable insights.
+            </p>
+
+        </div>
+
+
+
+        <!-- =========================
+             ANALYSIS CONTENT
+        ========================== -->
+
+        <div id="analysisContent">
+
+
+            <!-- =========================
+                 PROBLEM OVERVIEW
+            ========================== -->
+
+            <section class="problem-overview">
+
+
+                <div class="overview-main">
+
+                    <span class="analysis-label">
+                        SUBMITTED PROBLEM
+                    </span>
+
+
+                    <h2 id="problemTitle">
+                        Loading...
+                    </h2>
+
+
+                    <p id="problemDescription">
+                        Loading problem description...
+                    </p>
+
+                </div>
+
+
+
+                <!-- PROBLEM DETAILS -->
+
+                <div class="overview-meta">
+
+
+                    <div>
+
+                        <span>
+                            Location
+                        </span>
+
+                        <strong id="problemLocation">
+                            -
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Category
+                        </span>
+
+                        <strong id="problemCategory">
+                            -
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Urgency
+                        </span>
+
+                        <strong id="problemUrgency">
+                            -
+                        </strong>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Affected
+                        </span>
+
+                        <strong id="problemAffected">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 ANALYSIS CARDS
+            ========================== -->
+
+            <section class="analysis-grid">
+
+
+                <!-- PRIORITY -->
+
+                <div class="analysis-card">
+
+                    <span class="card-label">
+                        PRIORITY SCORE
+                    </span>
+
+
+                    <div
+                        class="score"
+                        id="priorityScore"
+                    >
+                        --
+                    </div>
+
+
+                    <p>
+                        Priority is calculated using
+                        the urgency and estimated
+                        community impact of the problem.
+                    </p>
+
+                </div>
+
+
+
+                <!-- IMPACT -->
+
+                <div class="analysis-card">
+
+                    <span class="card-label">
+                        IMPACT LEVEL
+                    </span>
+
+
+                    <div
+                        class="impact-value"
+                        id="impactLevel"
+                    >
+                        --
+                    </div>
+
+
+                    <p>
+                        Estimated impact of this problem
+                        on the affected community.
+                    </p>
+
+
+                    <p>
+                        Impact score:
+                        <strong id="impactScore">
+                            --
+                        </strong>
+                    </p>
+
+                </div>
+
+
+
+                <!-- SOLUTION READINESS -->
+
+                <div class="analysis-card">
+
+                    <span class="card-label">
+                        SOLUTION READINESS
+                    </span>
+
+
+                    <div class="impact-value">
+                        ACTIONABLE
+                    </div>
+
+
+                    <p>
+                        The problem can potentially be
+                        addressed using technology,
+                        collaboration and data-driven
+                        solutions.
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =========================
+                 INSIGHTS
+            ========================== -->
+
+            <section class="insights-section">
+
+
+                <!-- KEY CHALLENGES -->
+
+                <div class="insight-box">
+
+                    <h3>
+                        Key Challenges
+                    </h3>
+
+
+                    <ul id="challengeList">
+
+                        <li>
+                            Loading analysis...
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <!-- REQUIRED SKILLS -->
+
+                <div class="insight-box">
+
+                    <h3>
+                        Required Skills
+                    </h3>
+
+
+                    <div
+                        class="skill-list"
+                        id="skillList"
+                    >
+
+                        <span>
+                            Loading...
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =========================
+                 ACTION
+            ========================== -->
+
+            <div class="analysis-action">
+
+
+                <button class="primary-button" onclick="goToGovernment()">
+                    Send for Government Validation →
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="js/api.js"></script>
+    <script src="js/analysis.js"></script>
+
+
+    <script>
+function goToGovernment() {
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const problemId =
+        params.get("id");
+
+    if (problemId) {
+
+        window.location.href =
+            `government.html?id=${problemId}`;
+
+    }
+
+}
+</script>
+
+</body>
+
+</html>
