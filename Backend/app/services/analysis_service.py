@@ -192,6 +192,35 @@ CATEGORY_RULES = {
         ]
     },
 
+    "Environment": {
+        "keywords": [
+            "pollution",
+            "air quality",
+            "deforestation",
+            "forest",
+            "wildlife",
+            "climate",
+            "emissions",
+            "carbon",
+            "river pollution",
+            "soil erosion"
+        ],
+        "department": "Ministry of Environment & Forests",
+        "expertise": [
+            "Environmental Engineering",
+            "Ecology",
+            "Remote Sensing",
+            "Data Science",
+            "Biotechnology"
+        ],
+        "solutions": [
+            "Air Quality Monitoring",
+            "Afforestation Tracking",
+            "Pollution Sensor Network",
+            "Biodiversity Conservation"
+        ]
+    },
+
     "Energy": {
         "keywords": [
             "electricity",
@@ -220,6 +249,41 @@ CATEGORY_RULES = {
         ]
     }
 }
+
+
+def detect_language_backend(text: str) -> str:
+    """Detect language based on Unicode script ranges."""
+    if not text:
+        return "English"
+
+    devanagari = len(re.findall(r"[\u0900-\u097F]", text))
+    bengali = len(re.findall(r"[\u0980-\u09FF]", text))
+    gurmukhi = len(re.findall(r"[\u0A00-\u0A7F]", text))
+    gujarati = len(re.findall(r"[\u0A80-\u0AFF]", text))
+    odia = len(re.findall(r"[\u0B00-\u0B7F]", text))
+    tamil = len(re.findall(r"[\u0B80-\u0BFF]", text))
+    telugu = len(re.findall(r"[\u0C00-\u0C7F]", text))
+    kannada = len(re.findall(r"[\u0C80-\u0CFF]", text))
+    malayalam = len(re.findall(r"[\u0D00-\u0D7F]", text))
+
+    counts = [
+        ("Hindi", devanagari),
+        ("Bengali", bengali),
+        ("Punjabi", gurmukhi),
+        ("Gujarati", gujarati),
+        ("Odia", odia),
+        ("Tamil", tamil),
+        ("Telugu", telugu),
+        ("Kannada", kannada),
+        ("Malayalam", malayalam),
+    ]
+
+    counts.sort(key=lambda x: x[1], reverse=True)
+    if counts[0][1] > 0:
+        return counts[0][0]
+
+    return "English"
+
 
 
 # ---------------------------------------------------------
@@ -862,7 +926,10 @@ User selected urgency: {user_urgency}
             description
         )
 
+        detected_language = detect_language_backend(f"{title} {description}")
+
         return {
+            "language": detected_language,
             "category": category,
             "department": department,
             "department_confidence": 80,

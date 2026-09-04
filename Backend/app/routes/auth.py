@@ -303,33 +303,116 @@ DEMO_ACCOUNT_SPECS = (
 
 
 def seed_demo_accounts() -> None:
-    """Create demo users when DEMO_MODE is enabled. Safe to call on every startup."""
+    """Create demo users and realistic demo University/Industry records in PostgreSQL."""
     if not _demo_mode_enabled():
         return
 
     password = _demo_password()
     db = SessionLocal()
     try:
-        first_uni = db.query(University).order_by(University.id.asc()).first()
-        first_ind = db.query(Industry).order_by(Industry.id.asc()).first()
+        # Seed 3 Realistic Demo Universities if not present
+        demo_unis_data = [
+            {
+                "name": "IIT Delhi — Department of Civil & Environmental Engineering",
+                "location": "New Delhi, NCR",
+                "institution_type": "IIT / Central University",
+                "disciplines": ["Civil Engineering", "Environmental Engineering", "Water Resources", "Computer Science"],
+                "expertise": ["Hydrology", "Flood Management", "GIS", "Remote Sensing", "Water Resources", "Environmental Engineering", "Artificial Intelligence", "IoT Sensors"],
+                "facilities": ["Advanced Environmental Lab", "Hydrology Research Center", "AI & Robotics Lab"],
+                "innovation_centres": ["Technology Innovation Hub (TIH)"],
+                "incubation_facilities": ["FITT IIT Delhi Incubation Center"],
+                "description": "Premier research institution specializing in urban water management, hydrology, and environmental sensing."
+            },
+            {
+                "name": "IIT (ISM) Dhanbad — Center of Water & Disaster Management",
+                "location": "Dhanbad, Jharkhand",
+                "institution_type": "IIT / Institution of National Importance",
+                "disciplines": ["Environmental Science", "Mining Engineering", "Civil Engineering", "Disaster Mitigation"],
+                "expertise": ["Disaster Management", "Waste Management", "Mining Reclamation", "Soil Science", "Hydrology", "GIS"],
+                "facilities": ["Geo-Spatial Analysis Lab", "Water Quality Control Lab"],
+                "innovation_centres": ["Center for Societal Technology Transfer"],
+                "incubation_facilities": ["TexMin Incubation Center"],
+                "description": "Leading research hub for disaster management, waste recycling, and water resource monitoring."
+            },
+            {
+                "name": "IIT Roorkee — School of Hydrology & Renewable Energy",
+                "location": "Roorkee, Uttarakhand",
+                "institution_type": "IIT / Central Institute",
+                "disciplines": ["Hydrology", "Renewable Energy", "Earthquake Engineering", "Electrical Engineering"],
+                "expertise": ["Hydrology", "Flood Warning Systems", "Solar Energy", "Smart Grids", "River Engineering", "IoT"],
+                "facilities": ["National Hydrology Lab", "Renewable Energy Testing Center"],
+                "innovation_centres": ["TIDES Incubation Center"],
+                "incubation_facilities": ["Innovation & Incubation Cell"],
+                "description": "Pioneer institute in water resources engineering, dam safety, and renewable energy technologies."
+            }
+        ]
+
+        uni_records = []
+        for u_data in demo_unis_data:
+            existing_uni = db.query(University).filter(University.name == u_data["name"]).first()
+            if not existing_uni:
+                existing_uni = University(**u_data)
+                db.add(existing_uni)
+                db.commit()
+                db.refresh(existing_uni)
+            uni_records.append(existing_uni)
+
+        first_uni = uni_records[0]
+
+        # Seed 3 Realistic Demo Industry / MSME / CSR Organizations if not present
+        demo_inds_data = [
+            {
+                "name": "AquaTech Solutions Ltd (Water & CSR Division)",
+                "domain": "Water Infrastructure, Smart Sensors & CSR",
+                "capabilities": ["IoT Sensors", "Water Purification", "Smart Drainage", "CSR Funding", "Field Implementation"],
+                "resources": ["Engineering Field Team", "Water Sensor Kits", "CSR Impact Fund"],
+                "location": "Mumbai / National Operations"
+            },
+            {
+                "name": "EcoClean Municipal Systems India Ltd",
+                "domain": "Waste Management & Urban Infrastructure",
+                "capabilities": ["Waste Classification", "Smart Bin Sensors", "Recycling Plants", "Route Optimization", "MSME Manufacturing"],
+                "resources": ["Waste Processing Machinery", "Fleet Logistics", "CSR Project Management"],
+                "location": "Vadodara / Gujarat"
+            },
+            {
+                "name": "SolveX Tech & Infrastructure Solutions Pvt Ltd",
+                "domain": "Smart City Technology & Hardware Manufacturing",
+                "capabilities": ["Hardware Prototyping", "Cloud Platform", "Civil Infrastructure", "Solar Microgrids", "CSR Funding"],
+                "resources": ["Hardware Lab", "Cloud Infrastructure", "Field Technicians"],
+                "location": "Bengaluru / National HQ"
+            }
+        ]
+
+        ind_records = []
+        for i_data in demo_inds_data:
+            existing_ind = db.query(Industry).filter(Industry.name == i_data["name"]).first()
+            if not existing_ind:
+                existing_ind = Industry(**i_data)
+                db.add(existing_ind)
+                db.commit()
+                db.refresh(existing_ind)
+            ind_records.append(existing_ind)
+
+        first_ind = ind_records[0]
 
         for spec in DEMO_ACCOUNT_SPECS:
             existing = db.query(User).filter(User.email == spec["email"]).first()
             org_id = None
             org_name = spec["organization_name"]
 
-            if spec["role"] == "university" and first_uni:
+            if spec["role"] == "university":
                 org_id = first_uni.id
                 org_name = first_uni.name
-            elif spec["role"] == "industry" and first_ind:
+            elif spec["role"] == "industry":
                 org_id = first_ind.id
                 org_name = first_ind.name
 
             if existing:
-                # Keep demo org links current if they were never set
-                if existing.org_id is None and org_id is not None:
+                if existing.org_id != org_id or existing.organization_name != org_name:
                     existing.org_id = org_id
                     existing.organization_name = org_name
+                    db.commit()
                 continue
 
             db.add(
@@ -345,9 +428,9 @@ def seed_demo_accounts() -> None:
             )
 
         db.commit()
-    except Exception:
+    except Exception as e:
         db.rollback()
-        raise
+        print(f"⚠️ Error seeding demo accounts: {e}")
     finally:
         db.close()
 

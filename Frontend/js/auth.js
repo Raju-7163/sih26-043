@@ -131,7 +131,7 @@ async function register(name, email, password, role, organizationName, orgId) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.detail || 'Registration failed.');
+    throw new Error(apiErrorMessage(data, 'Registration failed. Please check your inputs.'));
   }
 
   saveSession(data.access_token, data.user);
@@ -150,12 +150,13 @@ async function login(email, password, role) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.detail || 'Login failed.');
+    throw new Error(apiErrorMessage(data, 'Login failed. Please check your credentials.'));
   }
 
   saveSession(data.access_token, data.user);
   return data;
 }
+
 
 
 // ── Logout ────────────────────────────────────────────────────────────────────
@@ -200,19 +201,50 @@ async function refreshMe() {
 }
 
 
+// ── Theme Management ─────────────────────────────────────────────────────────
+function getSavedTheme() {
+  return localStorage.getItem('sx_theme') || 'light';
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  localStorage.setItem('sx_theme', theme);
+  const btns = document.querySelectorAll('.theme-toggle-btn');
+  btns.forEach(btn => {
+    btn.innerHTML = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+  });
+}
+
+function toggleTheme() {
+  const current = getSavedTheme();
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+}
+
+// Immediately apply theme script to prevent flickering
+(function() {
+  const saved = localStorage.getItem('sx_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+})();
+
 // ── Render navbar auth state ──────────────────────────────────────────────────
 /**
  * Call this from every page's navbar to show the correct
- * "Login" or "UserName + Logout" state.
+ * "Login" or "UserName + Logout" state + Theme Toggle.
  *
  * Expects the navbar to have:
  *   <div id="navAuthArea"></div>
  */
 function renderNavAuth() {
+  applyTheme(getSavedTheme());
   const area = document.getElementById('navAuthArea');
   if (!area) return;
 
   const user = getCurrentUser();
+  const themeBtnHtml = `<button class="btn btn-ghost btn-sm theme-toggle-btn" onclick="toggleTheme()" type="button" style="gap:4px;padding:6px 10px;font-size:13px;border:1px solid var(--border-default);">
+    ${getSavedTheme() === 'dark' ? '☀️ Light' : '🌙 Dark'}
+  </button>`;
 
   if (user) {
     const roleLabel = {
@@ -225,6 +257,7 @@ function renderNavAuth() {
     const dashboardUrl = ROLE_DASHBOARDS[user.role] || 'index.html';
 
     area.innerHTML = `
+      ${themeBtnHtml}
       <a href="${dashboardUrl}" class="btn btn-ghost btn-sm" style="gap:6px;">
         ${roleLabel}
       </a>
@@ -235,6 +268,7 @@ function renderNavAuth() {
     `;
   } else {
     area.innerHTML = `
+      ${themeBtnHtml}
       <a href="login.html" class="btn btn-ghost btn-sm">Login</a>
       <a href="login.html?mode=register" class="btn btn-primary btn-sm">Sign Up</a>
     `;
@@ -251,3 +285,4 @@ function escapeHTMLAuth(val) {
 
 // ── Auto-render on DOMContentLoaded ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', renderNavAuth);
+

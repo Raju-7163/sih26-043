@@ -134,10 +134,24 @@ Rules:
 9. Do not provide explanations outside the JSON.
 """
 
-    response = client.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=prompt
-    )
+    try:
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=prompt
+        )
+    except Exception as e:
+        print(f"⚠️ Primary Gemini model {GEMINI_MODEL} failed: {e}. Trying gemini-2.5-flash...")
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+            )
+        except Exception as e2:
+            print(f"⚠️ gemini-2.5-flash failed: {e2}. Trying gemini-1.5-flash...")
+            response = client.models.generate_content(
+                model="gemini-1.5-flash",
+                contents=prompt
+            )
 
     response_text = response.text.strip()
 

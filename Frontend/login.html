@@ -775,7 +775,13 @@
           const orgId   = parseInt(document.getElementById('inputOrgId').value) || null;
 
           if (!name) {
-            setStatus('Please enter your full name.', 'error');
+            setStatus('Please enter your full name for account registration.', 'error');
+            setLoading(false);
+            return;
+          }
+
+          if (password.length < 6) {
+            setStatus('Password must be at least 6 characters long.', 'error');
             setLoading(false);
             return;
           }
@@ -783,7 +789,7 @@
           data = await register(name, email, password, role, orgName, orgId);
         }
 
-        setStatus('✓ Success! Redirecting…', 'success');
+        setStatus('✓ Account verified! Redirecting to dashboard…', 'success');
 
         setTimeout(() => {
           redirectToDashboard(data.user);
