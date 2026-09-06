@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database.connection import Base, engine, ensure_problem_schema
 from app.routes.problems import router as problems_router
-from app.routes.auth import router as auth_router, seed_demo_accounts
+from app.routes.auth import router as auth_router
 
 # Import all models so SQLAlchemy creates their tables on startup
 from app.models.user import User
@@ -23,14 +23,11 @@ from app.models.proposal import Proposal
 
 from app.services.ai_service import test_gemini_connection, analyze_problem
 
-# Create all tables (including the new `users` table)
+# Create all tables
 Base.metadata.create_all(bind=engine)
 
 # Run column-level migrations for the problems table
 ensure_problem_schema()
-
-# Create SIH demo accounts when DEMO_MODE=true
-seed_demo_accounts()
 
 
 app = FastAPI(
@@ -40,17 +37,11 @@ app = FastAPI(
 )
 
 
-# ── CORS ──────────────────────────────────────────────────────────────────────
+# ── CORS — allow all origins so any frontend port works ──────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        # also allow plain file:// opens via Live Server / browser
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -61,7 +52,16 @@ app.include_router(auth_router)
 app.include_router(problems_router)
 
 
-# ── Debug endpoints ───────────────────────────────────────────────────────────
+# ── Health & debug endpoints ──────────────────────────────────────────────────
+
+@app.get("/")
+def home():
+    return {
+        "message": "SolveX backend is running!",
+        "database": "Neon PostgreSQL",
+        "version": "2.0.0",
+    }
+
 
 @app.get("/api/ai/test")
 def test_ai():
@@ -78,12 +78,3 @@ def analyze_test():
     """
     result = analyze_problem(problem_text)
     return {"success": True, "analysis": result}
-
-
-@app.get("/")
-def home():
-    return {
-        "message": "SolveX backend is running!",
-        "database": "PostgreSQL",
-        "version": "2.0.0 — Role-Based Auth",
-    }

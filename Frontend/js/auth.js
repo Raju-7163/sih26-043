@@ -140,11 +140,11 @@ async function register(name, email, password, role, organizationName, orgId) {
 
 
 // ── Login ─────────────────────────────────────────────────────────────────────
-async function login(email, password, role) {
+async function login(email, password) {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({ email, password, role }),
+    body:    JSON.stringify({ email, password }),
   });
 
   const data = await response.json();

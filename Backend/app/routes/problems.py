@@ -302,7 +302,7 @@ def delete_project_member(
 def create_problem(
     problem_data: ProblemCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role("citizen")),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
 
     # --------------------------------------
@@ -532,14 +532,15 @@ def create_problem(
 @router.get("/")
 def get_problems(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role("government")),
+    current_user: Optional[User] = Depends(get_optional_user),
 ):
+    query = db.query(Problem)
 
-    problems = db.query(
-        Problem
-    ).order_by(
-        Problem.created_at.desc()
-    ).all()
+    # Government sees all; everyone else sees only validated problems
+    if not current_user or current_user.role not in ("government",):
+        query = query.filter(Problem.validation_status == "Validated")
+
+    problems = query.order_by(Problem.created_at.desc()).all()
 
 
     return [
@@ -763,6 +764,122 @@ def public_platform_stats(
         ).count(),
         "universities": db.query(University).count(),
         "industries": db.query(Industry).count(),
+    }
+
+
+# ============================================================
+# AWAITING GOVERNMENT CONFIRMATION
+# Problems where university has accepted — government needs to
+# confirm collaboration and kick off the project.
+# ============================================================
+
+@router.get("/awaiting-confirmation")
+def get_awaiting_confirmation(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role("government")),
+):
+    """
+    Returns validated problems that have at least one accepted university match
+    but no project yet created — i.e. awaiting government's final confirmation.
+    """
+
+    # Get all problems that are validated and have an accepted university match
+    accepted_uni_matches = db.query(UniversityMatch).filter(
+        UniversityMatch.status == "Accepted"
+    ).all()
+
+    problem_ids_with_uni = {m.problem_id for m in accepted_uni_matches}
+
+    # Exclude problems that already have a project (already confirmed)
+    existing_project_problem_ids = {
+        p.problem_id for p in db.query(Project).filter(
+            Project.problem_id.in_(list(problem_ids_with_uni))
+        ).all()
+    }
+
+    pending_confirmation_ids = problem_ids_with_uni - existing_project_problem_ids
+
+    results = []
+
+    for problem_id in pending_confirmation_ids:
+        problem = db.query(Problem).filter(Problem.id == problem_id).first()
+        if not problem or problem.validation_status != "Validated":
+            continue
+
+        # Get accepted university
+        uni_match = db.query(UniversityMatch).filter(
+            UniversityMatch.problem_id == problem_id,
+            UniversityMatch.status == "Accepted"
+        ).first()
+
+        university = None
+        if uni_match:
+            university = db.query(University).filter(
+                University.id == uni_match.university_id
+            ).first()
+
+        # Get accepted industry (optional)
+        ind_match = db.query(IndustryMatch).filter(
+            IndustryMatch.problem_id == problem_id,
+            IndustryMatch.status == "Accepted"
+        ).first()
+
+        industry = None
+        if ind_match:
+            industry = db.query(Industry).filter(
+                Industry.id == ind_match.industry_id
+            ).first()
+
+        # Count all pending university matches (others who haven't responded)
+        pending_uni_count = db.query(UniversityMatch).filter(
+            UniversityMatch.problem_id == problem_id,
+            UniversityMatch.status == "Pending"
+        ).count()
+
+        # Count all pending industry matches
+        pending_ind_count = db.query(IndustryMatch).filter(
+            IndustryMatch.problem_id == problem_id,
+            IndustryMatch.status == "Pending"
+        ).count()
+
+        results.append({
+            "problem_id":        problem.id,
+            "title":             problem.title,
+            "description":       problem.description,
+            "location":          problem.location,
+            "category":          problem.detected_category or problem.category,
+            "department":        problem.detected_department,
+            "urgency":           problem.urgency,
+            "priority_score":    problem.priority_score,
+            "status":            problem.status,
+            "validation_status": problem.validation_status,
+
+            "university": {
+                "match_id":   uni_match.id if uni_match else None,
+                "id":         university.id if university else None,
+                "name":       university.name if university else "Not assigned",
+                "location":   university.location if university else None,
+                "match_score": uni_match.match_score if uni_match else None,
+            },
+
+            "industry": {
+                "match_id":   ind_match.id if ind_match else None,
+                "id":         industry.id if industry else None,
+                "name":       industry.name if industry else None,
+                "location":   industry.location if industry else None,
+                "match_score": ind_match.match_score if ind_match else None,
+            } if ind_match else None,
+
+            "pending_university_responses": pending_uni_count,
+            "pending_industry_responses":   pending_ind_count,
+        })
+
+    # Sort by priority
+    results.sort(key=lambda x: x["priority_score"] or 0, reverse=True)
+
+    return {
+        "count":    len(results),
+        "problems": results,
     }
 
 
@@ -2149,30 +2266,24 @@ def generate_university_matches(
 
             # DATABASE MATCH ID
             "match_id": university_match.id,
+            "id":       university_match.id,
 
             # UNIVERSITY DATABASE ID
             "university_id": match["university_id"],
 
-            "university_name":
-                match["university_name"],
+            "university_name":  match["university_name"],
+            "location":         match.get("location"),
+            "institution_type": match.get("institution_type"),
+            "description":      match.get("description"),
 
-            "match_score":
-                match["match_score"],
+            "match_score":      match["match_score"],
+            "expertise_score":  match["expertise_score"],
+            "category_match":   match["category_match"],
 
-            "expertise_score":
-                match["expertise_score"],
+            "matched_expertise":  match["matched_expertise"],
+            "missing_expertise":  match["missing_expertise"],
 
-            "category_match":
-                match["category_match"],
-
-            "matched_expertise":
-                match["matched_expertise"],
-
-            "missing_expertise":
-                match["missing_expertise"],
-
-            "status":
-                university_match.status
+            "status": university_match.status
         })
 
     # ------------------------------------------
@@ -3451,22 +3562,34 @@ def generate_industry_matches(
     for match in saved_matches:
         db.refresh(match)
 
+    # Build an industry lookup so we include names in the response
+    industry_ids = [m.industry_id for m in saved_matches]
+    industry_lookup = {
+        ind.id: ind
+        for ind in db.query(Industry).filter(Industry.id.in_(industry_ids)).all()
+    }
+
     return {
         "message": "Industry matches generated successfully",
         "problem_id": problem.id,
         "matches": [
             {
-                "match_id": match.id,
-                "industry_id": match.industry_id,
-                "match_score": match.match_score,
-                "expertise_score": match.expertise_score,
-                "domain_match": match.domain_match,
-                "capability_match": match.capability_match,
-                "matched_expertise": match.matched_expertise,
-                "missing_expertise": match.missing_expertise,
+                "match_id":             match.id,
+                "id":                   match.id,
+                "industry_id":          match.industry_id,
+                "industry_name":        industry_lookup[match.industry_id].name        if match.industry_id in industry_lookup else None,
+                "location":             industry_lookup[match.industry_id].location     if match.industry_id in industry_lookup else None,
+                "organization_type":    industry_lookup[match.industry_id].organization_type if match.industry_id in industry_lookup else None,
+                "description":          industry_lookup[match.industry_id].description  if match.industry_id in industry_lookup else None,
+                "match_score":          match.match_score,
+                "expertise_score":      match.expertise_score,
+                "domain_match":         match.domain_match,
+                "capability_match":     match.capability_match,
+                "matched_expertise":    match.matched_expertise,
+                "missing_expertise":    match.missing_expertise,
                 "matched_capabilities": match.matched_capabilities,
                 "missing_capabilities": match.missing_capabilities,
-                "status": match.status
+                "status":               match.status,
             }
             for match in saved_matches
         ]
@@ -3816,11 +3939,14 @@ def confirm_collaboration(
     if not project:
         project = Project(
             problem_id=problem_id,
+            university_id=uni_match.university_id if uni_match else (
+                db.query(University).first().id if db.query(University).first() else 1
+            ),
             title=f"Project: {problem.title}",
             description=f"Quad-Helix joint execution workspace for problem '{problem.title}'.",
-            status="Active",
-            lead_university_id=uni_match.university_id if uni_match else None,
-            lead_industry_id=ind_match.industry_id if ind_match else None,
+            objectives=f"Develop and deploy an innovative solution for: {problem.title}",
+            expected_solution=", ".join(problem.suggested_solution_areas or []) or "To be defined",
+            status="Proposal",
         )
         db.add(project)
         db.commit()

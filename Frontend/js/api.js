@@ -725,6 +725,43 @@ async function getGovernmentDashboardStats() {
 }
 
 
+/* =========================================================
+   GOVERNMENT — AWAITING CONFIRMATION
+========================================================= */
+
+/*
+ * Get problems that have accepted university/industry partners
+ * and are awaiting government's final confirmation.
+ */
+async function getAwaitingConfirmation() {
+    const response = await authFetch(
+        `${API_BASE_URL}/api/problems/awaiting-confirmation`
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.detail || "Failed to load awaiting confirmation list");
+    }
+    return data;
+}
+
+
+/*
+ * Government confirms the collaboration — creates the project
+ * and sends notifications to all parties.
+ */
+async function confirmCollaboration(problemId) {
+    const response = await authFetch(
+        `${API_BASE_URL}/api/problems/${problemId}/confirm-collaboration`,
+        { method: "PUT" }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.detail || "Failed to confirm collaboration");
+    }
+    return data;
+}
+
+
 async function getUniversityDashboard(universityId) {
     const response = await authFetch(
         `${API_BASE_URL}/api/problems/dashboard/university/${universityId}`

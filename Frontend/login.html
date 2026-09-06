@@ -767,7 +767,7 @@
         let data;
 
         if (currentMode === 'login') {
-          data = await login(email, password, getSelectedRole());
+          data = await login(email, password);
         } else {
           const name    = document.getElementById('inputName').value.trim();
           const role    = getSelectedRole();

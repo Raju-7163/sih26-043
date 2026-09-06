@@ -69,9 +69,9 @@ export const ProblemDetailsPage: React.FC = () => {
       // Load Matches & Partnerships
       try {
         const [uRes, iRes, partRes] = await Promise.all([
-          matchingService.getUniversityMatches(problemId),
-          matchingService.getIndustryMatches(problemId),
-          matchingService.getPartnerships(problemId),
+          matchingService.getUniversityMatches(problemId).catch(() => []),
+          matchingService.getIndustryMatches(problemId).catch(() => []),
+          matchingService.getPartnerships(problemId).catch(() => []),
         ]);
         setUniMatches(Array.isArray(uRes) ? uRes : []);
         setIndMatches(Array.isArray(iRes) ? iRes : []);
@@ -156,8 +156,14 @@ export const ProblemDetailsPage: React.FC = () => {
   };
 
   const handleAcceptUniMatch = async (matchId: number) => {
+    // Ensure we have a valid integer match ID
+    const id = Number(matchId);
+    if (!id || isNaN(id)) {
+      toast.error('Invalid match ID — try regenerating the matches.');
+      return;
+    }
     try {
-      await matchingService.acceptUniversityMatch(matchId);
+      await matchingService.acceptUniversityMatch(id);
       toast.success('University match accepted!');
       loadProblemData();
     } catch (err: any) {
@@ -166,8 +172,13 @@ export const ProblemDetailsPage: React.FC = () => {
   };
 
   const handleAcceptIndMatch = async (matchId: number) => {
+    const id = Number(matchId);
+    if (!id || isNaN(id)) {
+      toast.error('Invalid match ID — try regenerating the matches.');
+      return;
+    }
     try {
-      await matchingService.acceptIndustryMatch(matchId);
+      await matchingService.acceptIndustryMatch(id);
       toast.success('Industry match accepted!');
       loadProblemData();
     } catch (err: any) {
@@ -589,7 +600,7 @@ export const ProblemDetailsPage: React.FC = () => {
                       <StatusBadge status={match.status} size="sm" />
                       {(isUni || isGovt) && match.status === 'Pending' && (
                         <button
-                          onClick={() => handleAcceptUniMatch(match.id)}
+                          onClick={() => handleAcceptUniMatch(match.match_id ?? match.id)}
                           className="px-3 py-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs transition"
                         >
                           Accept Request
@@ -648,7 +659,7 @@ export const ProblemDetailsPage: React.FC = () => {
                       <StatusBadge status={match.status} size="sm" />
                       {(isInd || isGovt) && match.status === 'Pending' && (
                         <button
-                          onClick={() => handleAcceptIndMatch(match.id)}
+                          onClick={() => handleAcceptIndMatch(match.match_id ?? match.id)}
                           className="px-3 py-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs transition"
                         >
                           Accept Request

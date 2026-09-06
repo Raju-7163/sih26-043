@@ -73,17 +73,21 @@ export interface AIAnalysis {
 
 export interface UniversityMatch {
   id: number;
+  match_id?: number;        // same as id — DB UniversityMatch PK
   problem_id: number;
   university_id: number;
   university_name?: string;
+  location?: string;
+  institution_type?: string;
+  description?: string;
   match_score: number;
+  expertise_score?: number;
   expertise_match?: number;
   category_match?: boolean;
   location_match?: boolean;
   status: 'Pending' | 'Accepted' | 'Rejected';
   matched_expertise?: string[];
   missing_expertise?: string[];
-  reason?: string;
   facilities?: string[];
   research_areas?: string[];
   created_at?: string;
@@ -91,11 +95,22 @@ export interface UniversityMatch {
 
 export interface IndustryMatch {
   id: number;
+  match_id?: number;        // same as id — DB IndustryMatch PK
   problem_id: number;
   industry_id: number;
   industry_name?: string;
+  location?: string;
+  organization_type?: string;
+  description?: string;
   match_score: number;
+  expertise_score?: number;
+  domain_match?: boolean;
+  capability_match?: boolean;
   status: 'Pending' | 'Accepted' | 'Rejected';
+  matched_expertise?: string[];
+  missing_expertise?: string[];
+  matched_capabilities?: string[];
+  missing_capabilities?: string[];
   match_reasons?: string[];
   relevant_capabilities?: string[];
   created_at?: string;
